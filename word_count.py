@@ -11,11 +11,13 @@
 #     ('text0'.txt', 'in data. Especially valuable in ar...').
 #     ...
 #     ('text2.txt'. 'hypotheses.')
-#   ]
+#   #]
 #
 import glob
 import fileinput
+
 def load_input(input_directory):
+
     filenames=glob.glob(input_directory + "/*.*")
 
     sequence=[]
@@ -29,7 +31,6 @@ def load_input(input_directory):
 
     
 print(load_input("input/")[10])
-    
 
 
 #
@@ -45,12 +46,14 @@ print(load_input("input/")[10])
 #   ]
 #
 def mapper(sequence):
+
     new_sequence=[
-    (word.lower().replace(".","").replace(",",""),1) 
-    for _, line in sequence 
-    for word in line.split()
+        (word.lower().replace(".","").replace(",",""),1) 
+        for _, line in sequence 
+        for word in line.split()
     ]
     return new_sequence
+
 
 
 
@@ -73,6 +76,8 @@ def shuffle_and_sort(sequence):
     return sequence
 
 
+
+
 #
 # Escriba la función reducer, la cual recibe el resultado de shuffle_and_sort y
 # reduce los valores asociados a cada clave sumandolos. Como resultado, por
@@ -80,6 +85,7 @@ def shuffle_and_sort(sequence):
 # texto.
 #
 from itertools import groupby
+
 def reducer(sequence):
     new_sequence=[]
     for k,g in groupby(sequence,lambda x: x[0]):
@@ -97,12 +103,13 @@ def reducer(sequence):
 # Escriba la función create_ouptput_directory que recibe un nombre de directorio
 # y lo crea. Si el directorio existe, la función falla.
 #
+
 import os.path
-def create_ouptput_directory(output_directory):
+
+def create_output_directory(output_directory):
     if os.path.isdir(output_directory):
         raise Exception("El directorio ya existe")
     os.mkdir(output_directory)
-
 
 
 #
@@ -114,11 +121,14 @@ def create_ouptput_directory(output_directory):
 # separados por un tabulador.
 #
 def save_output(output_directory, sequence):
+    #Concatenar con os el nombre del directorio y del archivo
     filename=os.path.join(output_directory, "part-00000")
 
     with open(filename,"w") as f:
         for key, value in sequence:
             f.write(f"{key}\t{value}\n")
+
+
 
 
 #
@@ -134,18 +144,17 @@ def create_marker(output_directory):
 # Escriba la función job, la cual orquesta las funciones anteriores.
 #
 def job(input_directory, output_directory):
-    sequence= load_input(input_directory)
+    sequence= load_input("input/")
     sequence= mapper(sequence)
     sequence=shuffle_and_sort(sequence)
     sequence=reducer(sequence)
-    create_ouptput_directory(output_directory)
-    save_output(output_directory,sequence)
-    create_marker(output_directory)
-
+    create_output_directory("output/")
+    save_output("output",sequence)
+    create_marker("output")
 
 
 if __name__ == "__main__":
-    job(
-        "input",
-        "output",
-    )
+     job(
+         "input",
+         "output",
+     )
